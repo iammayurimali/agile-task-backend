@@ -6,14 +6,17 @@ const {signup, login} = require("../controllers/Auth");
 const {auth, isEmplyoee,isManager} = require("../middlewares/auth");
 const {assignProject} = require("../controllers/AssignProject")
 const {addCompletedTask} = require("../controllers/AddCompletedTask")
-const {viewAddedTask , viewTaskByDate} = require("../controllers/ViewAddedTask")
+const {viewAddedTask} = require("../controllers/ViewAddedTask")
+const {editTaskAdded} = require("../controllers/EditTaskAdded")
 
 router.post("/login", login);
 router.post("/signup", signup);
 router.post("/assignProject", assignProject)
 router.post("/addCompletedTask", addCompletedTask)
+
 router.get("/viewAddedTask/:id", viewAddedTask)
-router.get("/viewAddedTask/:date", viewTaskByDate)
+
+router.put("/editTasksAdded", editTaskAdded)
 
 
 //Protected routes

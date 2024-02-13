@@ -40,30 +40,3 @@ exports.viewAddedTask = async (req, res) => {
 };
 
 
-exports.viewTaskByDate = async (req, res) => {
-    try {
-        const date = req.params.date;
-
-        // Find tasks for the specified date
-        const tasks = await AddTask.find({ date });
-
-        if (!tasks || tasks.length === 0) {
-            return res.status(404).json({
-                status: false,
-                message: "No tasks found for the specified date",
-            });
-        }
-
-        return res.status(200).json({
-            status: true,
-            message: "Tasks retrieved successfully",
-            data: tasks,
-        });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            status: false,
-            message: "Error retrieving tasks",
-        });
-    }
-};
