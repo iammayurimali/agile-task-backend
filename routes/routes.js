@@ -12,7 +12,7 @@ const {editTaskAdded} = require("../controllers/EditTaskAdded")
 router.post("/login", login);
 router.post("/signup", signup);
 router.post("/assignProject", assignProject)
-router.post("/addCompletedTask", addCompletedTask)
+router.post("/addCompletedTaskHour", addCompletedTask)
 
 router.get("/viewAddedTask/:id", viewAddedTask)
 

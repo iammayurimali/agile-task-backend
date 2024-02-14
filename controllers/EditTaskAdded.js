@@ -1,14 +1,14 @@
-const AddTask = require("../models/AddTask");
+const AddTaskHours = require("../models/AddTaskHours");
 const AssignProject = require("../models/AssignProject");
 const User = require("../models/User");
 require("dotenv").config();
 
 exports.editTaskAdded = async (req, res) => {
   try {
-    const { taskId,userId,  project, date, taskdone, starttime, endtime } = req.body;
+    const { taskId,userId, taskhour } = req.body;
 
     // Check if the user is assigned to the task
-    const isAssignedToTask = await AddTask.exists({
+    const isAssignedToTask = await AddTaskHours.exists({
       _id: taskId,
       userId: userId,
     });
@@ -20,14 +20,10 @@ exports.editTaskAdded = async (req, res) => {
       });
     }
 
-    const updatedTask = await AddTask.findByIdAndUpdate(
+    const updatedTask = await AddTaskHours.findByIdAndUpdate(
       { _id: taskId },
       {
-        project: project,
-        date: date,
-        taskdone: taskdone,
-        starttime: starttime,
-        endtime: endtime,
+        taskHours: taskhour,
       },
       { new: true }
     );

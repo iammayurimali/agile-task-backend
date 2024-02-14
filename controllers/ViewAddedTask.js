@@ -1,7 +1,5 @@
-const bcrypt = require("bcrypt");
 const User = require("../models/User");
-const jwt = require("jsonwebtoken");
-const AddTask = require("../models/AddTask");
+//onst AddTaskHours = require("../models/AddTaskHours");
 // const { options } = require("../routes/routes");
 require("dotenv").config();
 
@@ -11,7 +9,7 @@ exports.viewAddedTask = async (req, res) => {
     const id = req.params.id;
 
     // Find the user by ID
-    const user = await User.findById({_id:id}).populate("addTask");
+    const user = await User.findById({_id:id}).populate("assignProject").populate("addTaskHours");
 
     if (!user) {
       return res.status(404).json({
@@ -19,7 +17,7 @@ exports.viewAddedTask = async (req, res) => {
         message: "User not found",
       });
     }
-    if(user.addTask.length === 0){
+    if(user.assignProject.length === 0){
         return res.status(404).json({
             status: false,
             message:"No Task Added"
@@ -28,7 +26,7 @@ exports.viewAddedTask = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: "User's tasks retrieved successfully",
-      data: user.addTask,
+      data: user,
     });
   } catch (error) {
     console.error(error);
