@@ -53,7 +53,7 @@ exports.assignProject = async (req, res) => {
     console.error(error);
     return res.status(500).json({
       success: false,
-      message: "User cannot be registered, please try again later",
+      message: "No project exists",
     });
   }
 };
