@@ -5,7 +5,7 @@ const User = require("../models/User");
 
 exports.addCompletedTask = async (req, res) => {
   try {
-    const { userId, assignProjectId, date, taskHours } = req.body;
+    const { userId, assignProjectId, taskHours } = req.body;
 
     const user = await User.findById({ _id: userId });
     if (!user) {
@@ -27,24 +27,10 @@ exports.addCompletedTask = async (req, res) => {
       });
     }
 
-    // Check if the same date data already exists for the project
-    const existingTask = await AddTaskHours.findOne({
-      userId,
-      assignProjectId,
-      date,
-    });
-
-    if (existingTask) {
-      return res.status(400).json({
-        status: false,
-        message: "Task for the same date and project already exists",
-      });
-    }
 
     const addTaskHours = new AddTaskHours({
       userId,
       assignProjectId,
-      date,
       taskHours,
     });
 

@@ -11,16 +11,10 @@ const addTaskHoursSchema = new mongoose.Schema({
         required: true,
         ref:"AssignProject",
     },
-    date:{
+    taskHours:[{ 
         type:String,
         required:true,
-        trim:true,
-    },
-    taskHours:{ 
-        type:String,
-        required:true,
-        trim:true,  
-    },
+    }],
     totalWeekHours:{
         type: mongoose.Schema.Types.ObjectId,
         ref:"TotalWeekHours",
