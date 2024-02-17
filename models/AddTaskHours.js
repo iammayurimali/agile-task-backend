@@ -22,5 +22,5 @@ const addTaskHoursSchema = new mongoose.Schema({
         ref:"TotalWeekHours",
     }
 });
-
+addTaskHoursSchema.index({ assignProjectId: 1, 'taskHours.date': 1 }, { unique: true });
 module.exports = mongoose.model("AddTaskHours", addTaskHoursSchema);

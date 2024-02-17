@@ -3,6 +3,7 @@ const { signup, login } = require("../controllers/Auth");
 const { assignProject } = require("../controllers/AssignProject");
 const {addCompletedTask} = require("../controllers/AddCompletedTask")
 const bcrypt = require("bcrypt");
+const { editTaskAdded } = require("../controllers/EditTaskAdded");
 
 const resolvers = {
   Query: {
@@ -60,6 +61,15 @@ const resolvers = {
         throw new Error(error.message);
       }
     },
+    editAddedTask:async (parent, args, context, info) => {
+        try {
+          const editTaskDetail = await editTaskAdded(args.editTask);
+          // console.log("assign details",taskHoursDetail)
+          return editTaskDetail;
+        } catch (error) {
+          throw new Error(error.message);
+        }
+      },
   },
 };
 

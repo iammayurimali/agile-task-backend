@@ -62,11 +62,18 @@ input TaskHoursDetails{
     taskHours: [TaskHourInput]!
 }
 
+input EditTaskDeatils{
+    projectID:ID!,
+    taskId: ID!,
+    taskhour: [TaskHourInput]!
+}
+
 type Mutation{
     signup(userData: UserInput!): User
     login(loginData: LoginData) : User
     assignProject(assignproject: AssignProjectDetails) : AssignProject
     addTaskHours(taskHour: TaskHoursDetails) : AddTaskHours
+    editAddedTask(editTask: EditTaskDeatils) : AddTaskHours
 }
 `;
 

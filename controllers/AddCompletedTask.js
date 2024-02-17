@@ -20,7 +20,7 @@ exports.addCompletedTask = async (taskHour) => {
       throw new Error("User is not assigned to the specified project");
     }
 
-    const currentDate = new Date().toISOString();
+    const currentDate = new Date().toLocaleString();
 
     const taskHoursWithDate = taskHours.map((taskHourInput) => ({
       date: currentDate,

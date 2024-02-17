@@ -3,9 +3,9 @@ const AssignProject = require("../models/AssignProject");
 const User = require("../models/User");
 require("dotenv").config();
 
-exports.editTaskAdded = async (req, res) => {
+exports.editTaskAdded = async (editTask) => {
   try {
-    const { projectID,taskId, taskhour } = req.body;
+    const { projectID,taskId, taskhour } = editTask;
 
     const isAssignedToTask = await AddTaskHours.exists({
       _id: taskId,
@@ -13,10 +13,7 @@ exports.editTaskAdded = async (req, res) => {
     });
 
     if (!isAssignedToTask) {
-      return res.status(401).json({
-        status: false,
-        message: "Project is not assigned to the specified task",
-      });
+      throw new Error("Project is not assigned to the specified task")
     }
 
     const updatedTask = await AddTaskHours.findByIdAndUpdate(
@@ -27,16 +24,9 @@ exports.editTaskAdded = async (req, res) => {
       { new: true }
     );
    
-    return res.status(200).json({
-      status: true,
-      message: "Task updated successfully",
-      data: updatedTask,
-    });
+    return updatedTask
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Error updating the task",
-    });
+    return "error while updating task"
   }
 };
