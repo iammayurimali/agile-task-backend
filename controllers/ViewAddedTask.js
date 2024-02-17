@@ -9,7 +9,7 @@ exports.viewAddedTask = async (req, res) => {
     const id = req.params.id;
 
     // Find the user by ID
-    const user = await User.findById({_id:id}).populate("assignProject").populate("addTaskHours");
+    const user = await User.findById({_id:id}).populate("assignProject");
 
     if (!user) {
       return res.status(404).json({

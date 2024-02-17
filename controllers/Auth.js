@@ -4,127 +4,104 @@ const jwt = require("jsonwebtoken");
 //const { options } = require("../routes/routes");
 require("dotenv").config();
 
+exports.signup = async (userData) => {
+  const { firstname, lastname, email, password, confirmPassword, accountType } =
+    userData;
 
-//signup route handler
-exports.signup = async (req,res) => {
-    try{
-        //get data
-        const { firstname, lastname, email, password, accountType } = req.body;
-        //check if user already exist
-        const existingUser = await User.findOne({email});
+  // Check if all required fields are provided
+  if (
+    !firstname ||
+    !lastname ||
+    !email ||
+    !password ||
+    !confirmPassword ||
+    !accountType
+  ) {
+    throw new Error("All fields are required for signup");
+  }
 
-        if(existingUser){
-            return res.status(400).json({
-                success:false,
-                message:'User already Exists',
-            });
-        }
+  // Check if passwords match
+  if (password !== confirmPassword) {
+    throw new Error("Passwords don't match");
+  }
 
-        //secure password
-        let hashedPassword;
-        try{
-            hashedPassword = await bcrypt.hash(password, 10);
-        }
-        catch(err) {
-            return res.status(500).json({
-                success:false,
-                message:'Error inn hashing Password',
-            });
-        }
+  // Hash the password before storing it
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-        //create entry for User
-        const user = await User.create({
-            firstname,lastname,email,password:hashedPassword,accountType
-        })
+  // Check if a user with the provided email already exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    throw new Error("User with this email already exists");
+  }
 
-        return res.status(200).json({
-            success:true,
-            message:'User Created Successfully',
-        });
+  // Set the 'approved' value based on the accountType
+  let approved = accountType === "Manager" ? false : true;
 
-    }
-    catch(error) {
-        console.error(error);
-        return res.status(500).json({
-            success:false,
-            message:'User cannot be registered, please try again later',
-        });
-    }
-}
+  // Create a new user and save it to the database
+  const newUser = new User({
+    firstname,
+    lastname,
+    email,
+    password: hashedPassword,
+    accountType,
+    approved,
+  });
+  await newUser.save();
 
+  return newUser;
+};
 
 //login
-exports.login = async (req,res) => {
-    try {
+exports.login = async (loginData, context) => {
+  //data fetch
+  const { email, password } = loginData;
+  //validation on email and password
+  if (!email || !password) {
+    throw new Error("Enter both fields");
+  }
 
-        //data fetch
-        const {email, password} = req.body;
-        //validation on email and password
-        if(!email || !password) {
-            return res.status(400).json({
-                success:false,
-                message:'PLease fill all the details carefully',
-            });
-        }
+  //check for registered user
+  let user = await User.findOne({ email });
+  //if not a registered user
+  if (!user) {
+    throw new Error("User is not registered");
+  }
+  const isPasswordValid = await bcrypt.compare(password, user.password);
 
-        //check for registered user
-        let user = await User.findOne({email});
-        //if not a registered user
-        if(!user) {
-            return res.status(401).json({
-                success:false,
-                message:'User is not registered',
-            });
-        }
+  if (!isPasswordValid) {
+    throw new Error("Invalid password");
+  }
+  const payload = {
+    email: user.email,
+    id: user._id,
+    role: user.accountType,
+  };
+  //verify password & generate a JWT token
+  if (await bcrypt.compare(password, user.password)) {
+    //password match
+    let token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "2h",
+    });
 
-        const payload = {
-            email:user.email,
-            id:user._id,
-            name:user.firstname,
-            role:user.accountType,
-        };
-        //verify password & generate a JWT token
-        if(await bcrypt.compare(password,user.password) ) {
-            //password match
-            let token =  jwt.sign(payload, 
-                                process.env.JWT_SECRET,
-                                {
-                                    expiresIn:"2h",
-                                });
+    user = user.toObject();
+    user.token = token;
+    user.password = undefined;
 
-                                
+    const options = {
+      expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      httpOnly: true,
+    };
 
-            user = user.toObject();
-            user.token = token;
-            user.password = undefined;
-
-            const options = {
-                expires: new Date( Date.now() + 3 * 24 * 60 * 60 * 1000),
-                httpOnly:true,
-            }
-
-            res.cookie("mayuriCookie", token, options).status(200).json({
-                success:true,
-                token,
-                user,
-                message:'User Logged in successfully',
-            });
-        }
-        else {
-            //passwsord do not match
-            return res.status(403).json({
-                success:false,
-                message:"Password Incorrect",
-            });
-        }
-
-    }
-    catch(error) {
-        console.log(error);
-        return res.status(500).json({
-            success:false,
-            message:'Login Failure',
-        });
-
-    }
-}
+    context.res.cookie("token", token, options);
+    //console.log("token",token)
+    return {
+      success: true,
+      token,
+      loginData,
+      message: "User logged in successfully",
+    };
+  } else {
+    //passwsord do not match
+    throw new Error("Login Failure");
+  }
+};

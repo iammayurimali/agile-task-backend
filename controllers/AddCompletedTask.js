@@ -2,62 +2,44 @@ const AddTaskHours = require("../models/AddTaskHours");
 const AssignProject = require("../models/AssignProject");
 const User = require("../models/User");
 
-
-exports.addCompletedTask = async (req, res) => {
+exports.addCompletedTask = async (taskHour) => {
   try {
-    const { userId, assignProjectId, taskHours } = req.body;
+    const { userId, assignProjectID, taskHours } = taskHour;
 
     const user = await User.findById({ _id: userId });
     if (!user) {
-      return res.status(401).json({
-        status: false,
-        message: "User not found",
-      });
+      throw new Error("User not found");
     }
 
     const isAssignedToProject = await AssignProject.findOne({
-      _id: assignProjectId,
-      userId: userId,
+      _id: assignProjectID,
+      developerId: userId,
     });
 
     if (!isAssignedToProject) {
-      return res.status(401).json({
-        status: false,
-        message: "User is not assigned to the specified project",
-      });
+      throw new Error("User is not assigned to the specified project");
     }
 
+    const currentDate = new Date().toISOString();
 
-    const addTaskHours = new AddTaskHours({
-      userId,
-      assignProjectId,
-      taskHours,
-    });
+    const taskHoursWithDate = taskHours.map((taskHourInput) => ({
+      date: currentDate,
+      hours: taskHourInput.hours,
+    }));
 
-    const saveCompletedTask = await addTaskHours.save();
+    const addTaskHours = await new AddTaskHours({
+      assignProjectId:assignProjectID,
+      taskHours: taskHoursWithDate,
+    }).save();
 
     const updateProject = await AssignProject.findByIdAndUpdate(
-      { _id: assignProjectId },
-      { $push: { addTaskHours: saveCompletedTask._id } },
+      { _id: assignProjectID },
+      { $push: { addTaskHours: addTaskHours._id } },
       { new: true }
-    ).populate("addTaskHours").exec();
+    );
 
-    const updateUser = await User.findByIdAndUpdate(
-      { _id: userId },
-      { $push: { addTaskHours: saveCompletedTask._id } },
-      { new: true }
-    ).populate("addTaskHours").exec();
-
-    return res.status(200).json({
-      status: true,
-      message: "Task added successfully",
-      data:updateProject
-    });
+    return updateProject;
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Not able to add task hours",
-    });
+    throw new Error(error.message);
   }
 };

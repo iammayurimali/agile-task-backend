@@ -3,11 +3,11 @@ const router = express.Router();
  
 
 const {signup, login} = require("../controllers/Auth");
-const {auth, isEmplyoee,isManager} = require("../middlewares/auth");
+const {auth, isDeveloper,isManager} = require("../middlewares/auth");
 const {assignProject} = require("../controllers/AssignProject")
 const {addCompletedTask} = require("../controllers/AddCompletedTask")
 const {viewAddedTask} = require("../controllers/ViewAddedTask")
-const {editTaskAdded} = require("../controllers/EditTaskAdded")
+const {editTaskAdded} = require("../controllers/EditTaskAdded");
 
 router.post("/login", login);
 router.post("/signup", signup);
@@ -20,10 +20,12 @@ router.put("/editTasksAdded", editTaskAdded)
 
 
 //Protected routes
-router.get("/emplyoee", auth, isEmplyoee, (req,res) => {
+router.get("/developer", auth, isDeveloper, (req,res) => {
     res.json({
         success:true,
-        message:'Welcome to the Protected route for Emplyoee',
+        message:'Welcome to the Protected route for Developer',
+       // role: req.user.role
+       // id: req.user.id
     });
 } );
 

@@ -22,20 +22,23 @@ const userSchema = new mongoose.Schema({
     },
     accountType:{
         type:String,
-        enum:["Emplyoee", "Manager"],
+        enum:["Developer", "Manager"],
         required: true
     }, 
+    approved: {
+        type: Boolean,
+        default: true,
+    },
+    token: {
+        type: String,
+        
+    },
     assignProject:[{
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref:"AssignProject",
-    }],
-    addTaskHours:[{
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref:"AddTaskHours",
-    }],
+    }]
     
 });
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("user", userSchema);

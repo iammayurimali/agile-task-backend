@@ -3,9 +3,9 @@ const mongoose = require("mongoose");
 const validProjects = ["RH", "Project A", "Project B"];
 
 const assignProjectSchema = new mongoose.Schema({
-    userId:{
+    developerId:{
         type: mongoose.Schema.Types.ObjectId,
-        ref:"User"
+        ref:"user"
     },
     assignedproject:{
         type:String,

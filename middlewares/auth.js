@@ -3,7 +3,7 @@ require("dotenv").config();
 
 exports.auth = (req, res, next) =>{
     try{
-        const token = req.body.token;
+        const token = req.cookies.token || req.body.token ||  req.header("Authorization").replace("Bearer ", "");
         if(!token){
             return res.status(401).json({
                 status: false,
@@ -32,9 +32,9 @@ exports.auth = (req, res, next) =>{
 }
 
 
-exports.isEmplyoee = (req,res,next) => {
+exports.isDeveloper = (req,res,next) => {
     try{
-            if(req.user.role !== "Emplyoee") {
+            if(req.user.role !== "Developer") {
                 return res.status(401).json({
                     success:false,
                     message:'THis is a protected route for emplyoee',
