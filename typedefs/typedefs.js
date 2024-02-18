@@ -15,7 +15,7 @@ type AddTaskHours{
 }
 type AssignProject{
     id:ID
-    assignedproject: String
+    projectName: String
     addTaskHours:[AddTaskHours!]!
 }
 type User{
@@ -32,6 +32,9 @@ type User{
 type Query{
     hello: String,
     getUser: [User]
+    getAllDevelopers: [User]
+    getUserByID(id: ID!): User
+    getAssignedProject(id: ID!): [AssignProject]
 }
 input UserInput{
     firstname:String
@@ -45,12 +48,13 @@ input UserInput{
 input LoginData{
     email: String
     password: String
+    accountType:String
 
 }
 
 input AssignProjectDetails{
     developerId: ID!
-    assignProjectId: ID!
+    assignedproject: String
    
 }
 input TaskHourInput{
@@ -70,7 +74,7 @@ input EditTaskDeatils{
 
 type Mutation{
     signup(userData: UserInput!): User
-    login(loginData: LoginData) : User
+    login(loginData: LoginData!) : User
     assignProject(assignproject: AssignProjectDetails) : AssignProject
     addTaskHours(taskHour: TaskHoursDetails) : AddTaskHours
     editAddedTask(editTask: EditTaskDeatils) : AddTaskHours

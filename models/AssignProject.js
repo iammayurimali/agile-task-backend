@@ -7,7 +7,7 @@ const assignProjectSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:"user"
     },
-    assignedproject:{
+    projectName:{
         type:String,
         required:true,
         trim:true,   

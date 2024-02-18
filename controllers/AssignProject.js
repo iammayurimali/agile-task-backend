@@ -15,7 +15,7 @@ exports.assignProject = async (assignproject) => {
 
     const existingAssignment = await AssignProject.findOne({
       developerId: developerId,
-      assignedproject: assignedproject,
+      projectName: assignedproject,
     });
 
     if (existingAssignment) {
@@ -24,7 +24,7 @@ exports.assignProject = async (assignproject) => {
 
     const assignprojects = await new AssignProject({
       developerId,
-      assignedproject,
+      projectName:assignedproject,
     }).save();
 
     //const saveAssignedProjects = await assignProjects.save();

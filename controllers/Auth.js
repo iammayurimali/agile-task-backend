@@ -53,55 +53,64 @@ exports.signup = async (userData) => {
 
 //login
 exports.login = async (loginData, context) => {
-  //data fetch
-  const { email, password } = loginData;
-  //validation on email and password
-  if (!email || !password) {
-    throw new Error("Enter both fields");
-  }
+  try {
+    //data fetch
+    const { email, password, accountType } = loginData;
+    //validation on email and password
+    if (!email || !password || !accountType) {
+      throw new Error("Enter both fields");
+    }
 
-  //check for registered user
-  let user = await User.findOne({ email });
-  //if not a registered user
-  if (!user) {
-    throw new Error("User is not registered");
-  }
-  const isPasswordValid = await bcrypt.compare(password, user.password);
+    //check for registered user
+    let user = await User.findOne({ email });
+    //if not a registered user
+    if (!user) {
+      throw new Error("User is not registered");
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
-  if (!isPasswordValid) {
-    throw new Error("Invalid password");
-  }
-  const payload = {
-    email: user.email,
-    id: user._id,
-    role: user.accountType,
-  };
-  //verify password & generate a JWT token
-  if (await bcrypt.compare(password, user.password)) {
-    //password match
-    let token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "2h",
-    });
+    if (!isPasswordValid) {
+      throw new Error("Invalid password");
+    }
 
-    user = user.toObject();
-    user.token = token;
-    user.password = undefined;
+    // Check if accountType matches
+    if (user.accountType !== accountType) {
+      throw new Error("Incorrect account type");
+    }
 
-    const options = {
-      expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-      httpOnly: true,
+    const payload = {
+      email: user.email,
+      id: user._id,
+      role: user.accountType,
     };
 
-    context.res.cookie("token", token, options);
-    //console.log("token",token)
-    return {
-      success: true,
-      token,
-      loginData,
-      message: "User logged in successfully",
-    };
-  } else {
-    //passwsord do not match
-    throw new Error("Login Failure");
+    //verify password & generate a JWT token
+    if (await bcrypt.compare(password, user.password)) {
+      //password match
+      let token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "2h",
+      });
+
+      user = user.toObject();
+      user.token = token;
+      user.password = undefined;
+      user.id = user._id
+
+      const options = {
+        expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+      };
+
+      context.res.cookie("token", token, options);
+   
+      return user
+    } else {
+      // password does not match
+      throw new Error("Login Failure");
+    }
+  } catch (error) {
+    console.error("Login Error:", error);
+    throw error; // Re-throw the error to be caught in the calling code
   }
 };
+
