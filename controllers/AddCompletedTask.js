@@ -4,7 +4,7 @@ const User = require("../models/User");
 
 exports.addCompletedTask = async (taskHour) => {
   try {
-    const { userId, assignProjectID, taskHours } = taskHour;
+    const { userId, assignProjectID, startdate,enddate, taskHours } = taskHour;
 
     const user = await User.findById({ _id: userId });
     if (!user) {
@@ -20,15 +20,18 @@ exports.addCompletedTask = async (taskHour) => {
       throw new Error("User is not assigned to the specified project");
     }
 
-    const currentDate = new Date().toLocaleString();
-
+    const currentDate = new Date().toISOString();
+    //console.log("Taskhours:",currentDate)
     const taskHoursWithDate = taskHours.map((taskHourInput) => ({
-      date: currentDate,
+      day: taskHourInput.day,
+      date: taskHourInput.date,
       hours: taskHourInput.hours,
     }));
 
     const addTaskHours = await new AddTaskHours({
       assignProjectId:assignProjectID,
+      startdate,
+      enddate,
       taskHours: taskHoursWithDate,
     }).save();
 

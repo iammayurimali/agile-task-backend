@@ -4,11 +4,14 @@ const typeDefs = gql`
   type TaskHour {
     id: ID
     date: String!
+    day: String!
     hours: Float!
   }
 type AddTaskHours{
     id:ID
-    assignProjectId:AssignProject!
+    assignProjectId:AssignProject
+    startdate: String!
+    enddate:String!
     taskHours: [TaskHour!]
     totalWeekHours: String
 
@@ -58,11 +61,16 @@ input AssignProjectDetails{
    
 }
 input TaskHourInput{
-    hours: Float!
+    day: String!
+    date: String!
+    hours: Number!
+
 }
 input TaskHoursDetails{
     userId: ID!
     assignProjectID: ID
+    startdate: String!,
+    enddate:String!,
     taskHours: [TaskHourInput]!
 }
 

@@ -18,7 +18,7 @@ const resolvers = {
           path: "addTaskHours",
           populate: {
             path: "taskHours",
-            model: "TaskHour", // Adjust the model name as needed
+            model: "TaskHour", 
           },
         },
       });
@@ -87,7 +87,7 @@ const resolvers = {
     addTaskHours: async (parent, args, context, info) => {
       try {
         const taskHoursDetail = await addCompletedTask(args.taskHour);
-        // console.log("assign details",taskHoursDetail)
+        console.log("assign details",taskHoursDetail)
         return taskHoursDetail;
       } catch (error) {
         throw new Error(error.message);
