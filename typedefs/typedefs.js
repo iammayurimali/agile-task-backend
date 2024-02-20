@@ -65,11 +65,11 @@ input AssignProjectDetails{
    
 }
 
-# input taskHoursData{
-#     day: String!
-#     date: String!
-#     hours: Float!
-# }
+ input taskHoursData{
+     day: String!
+     date: String!
+     hours: Float!
+ }
 
 input hoursTask{
     day: String!
@@ -87,20 +87,19 @@ input TaskHoursDetails{
     idHoursData: [idHours]!
 }
 
-# input EditTaskDeatils{
-#     projectID:ID!,
-#     taskId: ID!
-#     taskhour: [taskHoursData]!
-# }
+input EditTaskDeatils{
+     userId:ID!
+     idHoursData: [idHours]!
+ }
 
 type Mutation{
     signup(userData: UserInput!): User
     login(loginData: LoginData!) : User
     assignProject(assignproject: AssignProjectDetails) : AssignProject
     addTaskHours(taskHoursData: TaskHoursDetails!) : AddTaskHours
-#     editAddedTask(editTask: EditTaskDeatils) : AddTaskHours
-# }
-}
+    editAddedTask(updateTaskData: EditTaskDeatils) : AddTaskHours
+ }
+
 `;
 
 module.exports = typeDefs

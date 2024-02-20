@@ -93,15 +93,15 @@ const resolvers = {
         throw new Error(error.message);
       }
     },
-    // editAddedTask: async (parent, args, context, info) => {
-    //   try {
-    //     const editTaskDetail = await editTaskAdded(args.editTask);
-    //     // console.log("assign details",taskHoursDetail)
-    //     return editTaskDetail;
-    //   } catch (error) {
-    //     throw new Error(error.message);
-    //   }
-    // },
+    editAddedTask: async (parent, args, context, info) => {
+       try {
+         const updateTaskDataDetail = await editTaskAdded(args.updateTaskData);
+         // console.log("assign details",taskHoursDetail)
+         return updateTaskDataDetail;
+       } catch (error) {
+         throw new Error(error.message);
+       }
+     },
   },
 };
 
