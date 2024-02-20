@@ -1,48 +1,71 @@
 const AddTaskHours = require("../models/AddTaskHours");
 const AssignProject = require("../models/AssignProject");
+const ProjectTaskHours = require("../models/ProjectTaskHours");
 const User = require("../models/User");
 
-exports.addCompletedTask = async (taskHour) => {
+exports.addCompletedTask = async (taskHoursData) => {
   try {
-    const { userId, assignProjectID, startdate,enddate, taskHours } = taskHour;
+      const { userId, startdate, enddate, idHoursData } = taskHoursData;
 
-    const user = await User.findById({ _id: userId });
-    if (!user) {
-      throw new Error("User not found");
-    }
+      for (let i = 0; i < idHoursData.length; i++) {
+          const { assignProjectId, hoursTaskData } = idHoursData[i];
 
-    const isAssignedToProject = await AssignProject.findOne({
-      _id: assignProjectID,
-      developerId: userId,
-    });
+         // console.log("AssignProjectId:", assignProjectId);
+        
+          const isAssignedToProject = await AssignProject.findOne({
+              _id: assignProjectId,
+              developerId: userId,
+          });
 
-    if (!isAssignedToProject) {
-      throw new Error("User is not assigned to the specified project");
-    }
+          if (!isAssignedToProject) {
+              throw new Error("User is not assigned to the specified project");
+          }
 
-    const currentDate = new Date().toISOString();
-    //console.log("Taskhours:",currentDate)
-    const taskHoursWithDate = taskHours.map((taskHourInput) => ({
-      day: taskHourInput.day,
-      date: taskHourInput.date,
-      hours: taskHourInput.hours,
-    }));
+          const existingAddTaskHours = await AddTaskHours.findOne({
+            startdate: startdate,
+            enddate: enddate,
+        });
 
-    const addTaskHours = await new AddTaskHours({
-      assignProjectId:assignProjectID,
-      startdate,
-      enddate,
-      taskHours: taskHoursWithDate,
-    }).save();
+        if (existingAddTaskHours) {
+            const existingProjectTaskHours = await ProjectTaskHours.findOne({
+                assignProjectId: assignProjectId,
+                //'taskHours.date': { $gte: startdate, $lte: enddate },
+            });
 
-    const updateProject = await AssignProject.findByIdAndUpdate(
-      { _id: assignProjectID },
-      { $push: { addTaskHours: addTaskHours._id } },
-      { new: true }
-    );
+            if (existingProjectTaskHours) {
+                console.log(`Data already exists for AssignProjectId ${assignProjectId}, StartDate: ${startdate}, EndDate: ${enddate}. Skipping.`);
+                continue;
+            }
+        }
+        //  console.log("CHECK>>>>>>>>>>>>>>>>>>>>>>>",existingProjectTaskHours)
+          const taskHoursWithDate = hoursTaskData.map((taskHourInput) => ({
+              day: taskHourInput.day,
+              date: taskHourInput.date,
+              hours: taskHourInput.hours,
+          }));
 
-    return updateProject;
+          const projectTaskHours = await new ProjectTaskHours({
+              assignProjectId: assignProjectId,
+              taskHours: taskHoursWithDate,
+          }).save();
+
+          const addTaskHours = await new AddTaskHours({
+              startdate: startdate,
+              enddate: enddate,
+              projectTaskHoursDetails: [projectTaskHours._id],
+          }).save();
+
+          const updateProject = await AssignProject.findByIdAndUpdate(
+              { _id: assignProjectId },
+              { $push: { addTaskHours: addTaskHours._id } },
+              { new: true }
+          );
+          //console.log("Final data:", addTaskHours)
+      }
+      
+      return taskHoursData;
   } catch (error) {
-    throw new Error(error.message);
+      throw new Error(error.message);
   }
 };
+

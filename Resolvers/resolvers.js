@@ -17,8 +17,8 @@ const resolvers = {
         populate: {
           path: "addTaskHours",
           populate: {
-            path: "taskHours",
-            model: "TaskHour", 
+            path: "projectTaskHoursDetails",
+            model: "projectTaskHours", 
           },
         },
       });
@@ -86,22 +86,22 @@ const resolvers = {
     },
     addTaskHours: async (parent, args, context, info) => {
       try {
-        const taskHoursDetail = await addCompletedTask(args.taskHour);
+        const taskHoursDetail = await addCompletedTask(args.taskHoursData);
         console.log("assign details",taskHoursDetail)
         return taskHoursDetail;
       } catch (error) {
         throw new Error(error.message);
       }
     },
-    editAddedTask: async (parent, args, context, info) => {
-      try {
-        const editTaskDetail = await editTaskAdded(args.editTask);
-        // console.log("assign details",taskHoursDetail)
-        return editTaskDetail;
-      } catch (error) {
-        throw new Error(error.message);
-      }
-    },
+    // editAddedTask: async (parent, args, context, info) => {
+    //   try {
+    //     const editTaskDetail = await editTaskAdded(args.editTask);
+    //     // console.log("assign details",taskHoursDetail)
+    //     return editTaskDetail;
+    //   } catch (error) {
+    //     throw new Error(error.message);
+    //   }
+    // },
   },
 };
 

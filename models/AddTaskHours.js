@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
 const addTaskHoursSchema = new mongoose.Schema({
-    assignProjectId:{
+    assignProjectId:[{
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref:"AssignProject",
-    },
+    }],
     startdate: {
         type: String,
         required: true
@@ -14,20 +14,10 @@ const addTaskHoursSchema = new mongoose.Schema({
         type: String,
         required:true
     },
-    taskHours: [{
-        date: {
-            type: String,
-            required:true
-        },
-        day: {
-            type: String,
-            required:true
-        },
-        hours: {
-            type: Number,
-            default: 0,
-            required: true,
-        },
+    projectTaskHoursDetails: [{
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref:"projectTaskHours",
     }],
     totalWeekHours:{
         type: mongoose.Schema.Types.ObjectId,

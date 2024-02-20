@@ -2,17 +2,21 @@ const {gql} = require("apollo-server-express")
 
 const typeDefs = gql`
   type TaskHour {
-    id: ID
+    id: ID!
     date: String!
     day: String!
     hours: Float!
   }
+
+type ProjectTaskHours{
+    assignProjectId: ID!
+    taskHours: [TaskHour]!
+}
 type AddTaskHours{
-    id:ID
-    assignProjectId:AssignProject
+    id:ID!
     startdate: String!
     enddate:String!
-    taskHours: [TaskHour!]
+    projectTaskHoursDetails: [ProjectTaskHours!]
     totalWeekHours: String
 
 }
@@ -60,32 +64,42 @@ input AssignProjectDetails{
     assignedproject: String
    
 }
-input TaskHourInput{
+
+# input taskHoursData{
+#     day: String!
+#     date: String!
+#     hours: Float!
+# }
+
+input hoursTask{
     day: String!
     date: String!
-    hours: Number!
-
+    hours: Float!
+}
+input idHours{
+    assignProjectId: ID!
+    hoursTaskData: [hoursTask]!
 }
 input TaskHoursDetails{
     userId: ID!
-    assignProjectID: ID
-    startdate: String!,
-    enddate:String!,
-    taskHours: [TaskHourInput]!
+    startdate: String!
+    enddate:String!
+    idHoursData: [idHours]!
 }
 
-input EditTaskDeatils{
-    projectID:ID!,
-    taskId: ID!,
-    taskhour: [TaskHourInput]!
-}
+# input EditTaskDeatils{
+#     projectID:ID!,
+#     taskId: ID!
+#     taskhour: [taskHoursData]!
+# }
 
 type Mutation{
     signup(userData: UserInput!): User
     login(loginData: LoginData!) : User
     assignProject(assignproject: AssignProjectDetails) : AssignProject
-    addTaskHours(taskHour: TaskHoursDetails) : AddTaskHours
-    editAddedTask(editTask: EditTaskDeatils) : AddTaskHours
+    addTaskHours(taskHoursData: TaskHoursDetails!) : AddTaskHours
+#     editAddedTask(editTask: EditTaskDeatils) : AddTaskHours
+# }
 }
 `;
 
