@@ -6,11 +6,10 @@ const User = require("../models/User");
 exports.addCompletedTask = async (taskHoursData) => {
   try {
       const { userId, startdate, enddate, idHoursData } = taskHoursData;
-
+        
       for (let i = 0; i < idHoursData.length; i++) {
           const { assignProjectId, hoursTaskData } = idHoursData[i];
 
-         // console.log("AssignProjectId:", assignProjectId);
         
           const isAssignedToProject = await AssignProject.findOne({
               _id: assignProjectId,
@@ -37,7 +36,6 @@ exports.addCompletedTask = async (taskHoursData) => {
                 continue;
             }
         }
-        //  console.log("CHECK>>>>>>>>>>>>>>>>>>>>>>>",existingProjectTaskHours)
           const taskHoursWithDate = hoursTaskData.map((taskHourInput) => ({
               day: taskHourInput.day,
               date: taskHourInput.date,
@@ -60,7 +58,7 @@ exports.addCompletedTask = async (taskHoursData) => {
               { $push: { addTaskHours: addTaskHours._id } },
               { new: true }
           );
-          //console.log("Final data:", addTaskHours)
+       
       }
       
       return taskHoursData;

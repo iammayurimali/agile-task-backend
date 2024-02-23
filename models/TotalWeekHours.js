@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-
 const totalWeekHoursSchema = new mongoose.Schema({
     addTaskHours:[{
         type: mongoose.Schema.Types.ObjectId,

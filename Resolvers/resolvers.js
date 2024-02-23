@@ -27,7 +27,17 @@ const resolvers = {
     },
     getAllDevelopers: async () => {
       try {
-        const developers = await User.find({ accountType: "Developer" });
+        const developers = await User.find({ accountType: "Developer" }).populate({
+          path: "assignProject",
+          populate: {
+            path: "addTaskHours",
+            populate: {
+              path: "projectTaskHoursDetails",  
+              model: "projectTaskHours", 
+            },
+          },
+        });
+  
         return developers;
       } catch (error) {
         console.error("Error fetching developers:", error);
@@ -36,8 +46,16 @@ const resolvers = {
     },
     getUserByID: async (_,args) => {
       try {
-        const user = await User.findOne({ _id: args.id }).populate("assignProject");
-    
+        const user = await User.findOne({ _id: args.id }).populate({
+          path: "assignProject",
+          populate: {
+            path: "addTaskHours",
+            populate: {
+              path: "projectTaskHoursDetails",
+              model: "projectTaskHours", 
+            },
+          },
+        });
         return user;
       } catch (error) {
         console.error("Error fetching assigned projects:", error);
@@ -46,8 +64,15 @@ const resolvers = {
     },
     getAssignedProject: async (_,args) => {
       try {
-        const user = await AssignProject.find({ developerId: args.id });
-    
+        const user = await AssignProject.find({ developerId: args.id }).populate({
+      
+            path: "addTaskHours",
+            populate: {
+              path: "projectTaskHoursDetails",
+              model: "projectTaskHours", 
+            },
+        
+        });
         return user;
       } catch (error) {
         console.error("Error fetching assigned projects:", error);
@@ -87,7 +112,7 @@ const resolvers = {
     addTaskHours: async (parent, args, context, info) => {
       try {
         const taskHoursDetail = await addCompletedTask(args.taskHoursData);
-        console.log("assign details",taskHoursDetail)
+        console.log("Add details",taskHoursDetail)
         return taskHoursDetail;
       } catch (error) {
         throw new Error(error.message);
@@ -96,7 +121,7 @@ const resolvers = {
     editAddedTask: async (parent, args, context, info) => {
        try {
          const updateTaskDataDetail = await editTaskAdded(args.updateTaskData);
-         // console.log("assign details",taskHoursDetail)
+         console.log("Updated task details",updateTaskDataDetail)
          return updateTaskDataDetail;
        } catch (error) {
          throw new Error(error.message);

@@ -10,7 +10,7 @@ const typeDefs = gql`
 
 type ProjectTaskHours{
     assignProjectId: ID!
-    taskHours: [TaskHour]!
+    taskHours: [TaskHour!]!
 }
 type AddTaskHours{
     id:ID!
@@ -97,7 +97,7 @@ type Mutation{
     login(loginData: LoginData!) : User
     assignProject(assignproject: AssignProjectDetails) : AssignProject
     addTaskHours(taskHoursData: TaskHoursDetails!) : AddTaskHours
-    editAddedTask(updateTaskData: EditTaskDeatils) : AddTaskHours
+    editAddedTask(updateTaskData: EditTaskDeatils) : ProjectTaskHours
  }
 
 `;
