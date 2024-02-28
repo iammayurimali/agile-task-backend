@@ -16,10 +16,8 @@ const resolvers = {
         path: "assignProject",
         populate: {
           path: "addTaskHours",
-          populate: {
-            path: "projectTaskHoursDetails",
-            model: "projectTaskHours", 
-          },
+          model: "projectTaskHours", 
+         
         },
       });
 
@@ -31,10 +29,7 @@ const resolvers = {
           path: "assignProject",
           populate: {
             path: "addTaskHours",
-            populate: {
-              path: "projectTaskHoursDetails",  
-              model: "projectTaskHours", 
-            },
+            model: "projectTaskHours", 
           },
         });
   
@@ -50,10 +45,7 @@ const resolvers = {
           path: "assignProject",
           populate: {
             path: "addTaskHours",
-            populate: {
-              path: "projectTaskHoursDetails",
-              model: "projectTaskHours", 
-            },
+            model: "AddTaskHours",
           },
         });
         return user;
@@ -67,10 +59,8 @@ const resolvers = {
         const user = await AssignProject.find({ developerId: args.id }).populate({
       
             path: "addTaskHours",
-            populate: {
-              path: "projectTaskHoursDetails",
-              model: "projectTaskHours", 
-            },
+            model: "AddTaskHours", 
+           
         
         });
         return user;
@@ -112,7 +102,7 @@ const resolvers = {
     addTaskHours: async (parent, args, context, info) => {
       try {
         const taskHoursDetail = await addCompletedTask(args.taskHoursData);
-        console.log("Add details",taskHoursDetail)
+       // console.log("Add details",taskHoursDetail)
         return taskHoursDetail;
       } catch (error) {
         throw new Error(error.message);

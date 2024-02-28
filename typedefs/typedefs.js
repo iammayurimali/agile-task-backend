@@ -14,9 +14,10 @@ type ProjectTaskHours{
 }
 type AddTaskHours{
     id:ID!
-    startdate: String!
-    enddate:String!
-    projectTaskHoursDetails: [ProjectTaskHours!]
+    date: String!
+    day: String!
+    hours: Float!
+    comments: String!
     totalWeekHours: String
 
 }
@@ -82,22 +83,20 @@ input idHours{
 }
 input TaskHoursDetails{
     userId: ID!
-    startdate: String!
-    enddate:String!
-    idHoursData: [idHours]!
+    assignProjectId: ID!
+    day: String!
+    date: String!
+    hours: Float!
+    comments: String!
 }
 
-input EditTaskDeatils{
-     userId:ID!
-     idHoursData: [idHours]!
- }
 
 type Mutation{
     signup(userData: UserInput!): User
     login(loginData: LoginData!) : User
     assignProject(assignproject: AssignProjectDetails) : AssignProject
     addTaskHours(taskHoursData: TaskHoursDetails!) : AddTaskHours
-    editAddedTask(updateTaskData: EditTaskDeatils) : ProjectTaskHours
+    editAddedTask(updateTaskData: TaskHoursDetails) : AddTaskHours
  }
 
 `;

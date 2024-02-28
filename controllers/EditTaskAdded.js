@@ -6,48 +6,70 @@ require("dotenv").config();
 
 exports.editTaskAdded = async (updateTaskData) => {
   try {
-    const { userId, idHoursData } = updateTaskData;
+    const { userId, assignProjectId, date, day, hours, comments } =
+      updateTaskData;
     const updatedProjectTaskHours = [];
 
-    for (let i = 0; i < idHoursData.length; i++) {
-      const { assignProjectId, hoursTaskData } = idHoursData[i];
+    const isAssignedToProject = await AssignProject.findOne({
+      _id: assignProjectId,
+      developerId: userId,
+    });
 
-      const isAssignedToProject = await AssignProject.findOne({
-        _id: assignProjectId,
-        developerId: userId,
-      });
-
-      if (!isAssignedToProject) {
-        throw new Error("Not assigned to project");
-      }
-
-      for (let j = 0; j < hoursTaskData.length; j++) {
-        const { date, hours } = hoursTaskData[j];
-
-        // Find the corresponding ProjectTaskHours record
-        const projectTaskHours = await ProjectTaskHours.findOne({
-          assignProjectId: assignProjectId,
-          "taskHours.date": date,
-        });
-
-        if (projectTaskHours) {
-          // Update only the 'hours' field of the specific taskHour
-          const taskHourToUpdate = projectTaskHours.taskHours.find(
-            (taskHour) => taskHour.date === date
-          );
-          if (taskHourToUpdate) {
-            taskHourToUpdate.hours = hours;
-            console.log(
-              `Hours updated for AssignProjectId ${assignProjectId}, Date: ${date}, New Hours: ${hours}`
-            );
-          }
-        }
-        await projectTaskHours.save();
-        updatedProjectTaskHours.push(projectTaskHours);
-      }
+    if (!isAssignedToProject) {
+      throw new Error("Not assigned to project");
     }
 
-    return updatedProjectTaskHours;
+    const addTaskHours = await AddTaskHours.findOne({
+      assignProjectId: assignProjectId,
+      date: date,
+    });
+
+    if (!addTaskHours) {
+      throw new Error("Task not found");
+    }
+
+    if (
+      // userId !== addTaskHours.userId ||
+      //assignProjectId !== addTaskHours.assignProjectId ||
+      date !== addTaskHours.date ||
+      day !== addTaskHours.day
+    ) {
+      throw new Error("Cannot update day, or date");
+    }
+    console.log(assignProjectId, addTaskHours.assignProjectId)
+    addTaskHours.hours = hours;
+    addTaskHours.comments = comments;
+
+    const totalHoursForDate = await AddTaskHours.aggregate([
+      {
+        $match: {
+          date: date,
+          assignProjectId: { $ne: assignProjectId }, 
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalHours: { $sum: "$hours" },
+        },
+      },
+    ]);
+
+    if (
+      totalHoursForDate.length > 0 &&
+      totalHoursForDate[0].totalHours + hours > 24
+    ) {
+      throw new Error(
+        "Total hours for the date exceed 24 hours across projects"
+      );
+    }
+
+  
+
+    await addTaskHours.save();
+    updatedProjectTaskHours.push(addTaskHours);
+
+    return updateTaskData;
   } catch (error) {
     throw new Error(error.message);
   }

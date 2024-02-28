@@ -3,12 +3,10 @@ const User = require("../models/User");
 // const { options } = require("../routes/routes");
 require("dotenv").config();
 
-// viewAddedTask route handler
 exports.viewAddedTask = async (req, res) => {
   try {
     const id = req.params.id;
 
-    // Find the user by ID
     const user = await User.findById({_id:id}).populate("assignProject");
 
     if (!user) {

@@ -1,28 +1,30 @@
 const mongoose = require("mongoose");
 
 const addTaskHoursSchema = new mongoose.Schema({
-    assignProjectId:[{
+    assignProjectId:{
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
         ref:"AssignProject",
-    }],
-    startdate: {
-        type: String,
-        required: true
     },
-    enddate: {
+    date: {
         type: String,
         required:true
     },
-    projectTaskHoursDetails: [{
-        type: mongoose.Schema.Types.ObjectId,
+    day: {
+        type: String,
+        required:true
+    },
+    hours: {
+        type: Number,
+        default: 0,
         required: true,
-        ref:"projectTaskHours",
-    }],
+    },
+    comments: {
+        type : String,
+        required: true
+    },
     totalWeekHours:{
         type: mongoose.Schema.Types.ObjectId,
         ref:"TotalWeekHours",
     }
 });
-//addTaskHoursSchema.index({ assignProjectId: 1, 'taskHours.date': 1 }, { unique: true });
 module.exports = mongoose.model("AddTaskHours", addTaskHoursSchema);

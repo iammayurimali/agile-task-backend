@@ -8,7 +8,6 @@ exports.signup = async (userData) => {
   const { firstname, lastname, email, password, confirmPassword, accountType } =
     userData;
 
-  // Check if all required fields are provided
   if (
     !firstname ||
     !lastname ||
@@ -20,24 +19,19 @@ exports.signup = async (userData) => {
     throw new Error("All fields are required for signup");
   }
 
-  // Check if passwords match
   if (password !== confirmPassword) {
     throw new Error("Passwords don't match");
   }
 
-  // Hash the password before storing it
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Check if a user with the provided email already exists
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw new Error("User with this email already exists");
   }
 
-  // Set the 'approved' value based on the accountType
   let approved = accountType === "Manager" ? false : true;
 
-  // Create a new user and save it to the database
   const newUser = new User({
     firstname,
     lastname,
@@ -51,19 +45,14 @@ exports.signup = async (userData) => {
   return newUser;
 };
 
-//login
 exports.login = async (loginData, context) => {
   try {
-    //data fetch
     const { email, password, accountType } = loginData;
-    //validation on email and password
     if (!email || !password || !accountType) {
       throw new Error("Enter both fields");
     }
 
-    //check for registered user
     let user = await User.findOne({ email });
-    //if not a registered user
     if (!user) {
       throw new Error("User is not registered");
     }
@@ -73,7 +62,6 @@ exports.login = async (loginData, context) => {
       throw new Error("Invalid password");
     }
 
-    // Check if accountType matches
     if (user.accountType !== accountType) {
       throw new Error("Incorrect account type");
     }
@@ -84,9 +72,7 @@ exports.login = async (loginData, context) => {
       role: user.accountType,
     };
 
-    //verify password & generate a JWT token
     if (await bcrypt.compare(password, user.password)) {
-      //password match
       let token = jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: "2h",
       });
@@ -105,12 +91,11 @@ exports.login = async (loginData, context) => {
    
       return user
     } else {
-      // password does not match
       throw new Error("Login Failure");
     }
   } catch (error) {
     console.error("Login Error:", error);
-    throw error; // Re-throw the error to be caught in the calling code
+    throw error; 
   }
 };
 

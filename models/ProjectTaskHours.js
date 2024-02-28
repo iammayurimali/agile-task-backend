@@ -5,7 +5,7 @@ const taskHoursSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref:"AssignProject",
-    },
+    }, 
     taskHours: [{
         date: {
             type: String,
@@ -23,5 +23,4 @@ const taskHoursSchema = new mongoose.Schema({
 
     } ]
 });
-//addTaskHoursSchema.index({ assignProjectId: 1, 'taskHours.date': 1 }, { unique: true });
 module.exports = mongoose.model("projectTaskHours", taskHoursSchema);

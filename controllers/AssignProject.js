@@ -27,7 +27,6 @@ exports.assignProject = async (assignproject) => {
       projectName:assignedproject,
     }).save();
 
-    //const saveAssignedProjects = await assignProjects.save();
 
     const updateUser = await User.findByIdAndUpdate(
       { _id: developerId },
@@ -35,7 +34,6 @@ exports.assignProject = async (assignproject) => {
       { new: true }
     );
 
-    //const populatedUser = await updateUser.populate("assignProject");
 
     return assignprojects
   } 
