@@ -29,7 +29,7 @@ const resolvers = {
           path: "assignProject",
           populate: {
             path: "addTaskHours",
-            model: "projectTaskHours", 
+            model: "AddTaskHours", 
           },
         });
   
@@ -75,7 +75,7 @@ const resolvers = {
     signup: async (parent, args, context, info) => {
       try {
         const newUser = await signup(args.userData);
-        console.log("Signup details:", newUser);
+       // console.log("Signup details:", newUser);
         return newUser;
       } catch (error) {
         throw new Error(error.message);
@@ -84,7 +84,7 @@ const resolvers = {
     login: async (parent, args, context, info) => {
       try {
         const loginDetails = await login(args.loginData, context);
-        console.log("login details:", loginDetails);
+       // console.log("login details:", loginDetails);
         return loginDetails;
       } catch (error) {
         throw new Error(error.message);
@@ -111,7 +111,7 @@ const resolvers = {
     editAddedTask: async (parent, args, context, info) => {
        try {
          const updateTaskDataDetail = await editTaskAdded(args.updateTaskData);
-         console.log("Updated task details",updateTaskDataDetail)
+        // console.log("Updated task details",updateTaskDataDetail)
          return updateTaskDataDetail;
        } catch (error) {
          throw new Error(error.message);
