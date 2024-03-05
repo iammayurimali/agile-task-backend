@@ -90,6 +90,14 @@ input TaskHoursDetails{
     comments: String!
 }
 
+input DeleteData{
+    assignProjectId: ID!
+    day: String!
+    date: String!
+    hours: Float!
+    comments: String!
+}
+
 
 type Mutation{
     signup(userData: UserInput!): User
@@ -97,6 +105,7 @@ type Mutation{
     assignProject(assignproject: AssignProjectDetails) : AssignProject
     addTaskHours(taskHoursData: TaskHoursDetails!) : AddTaskHours
     editAddedTask(updateTaskData: TaskHoursDetails) : AddTaskHours
+    deleteTaskData(deletedata: DeleteData) : AddTaskHours
  }
 
 `;

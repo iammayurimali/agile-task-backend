@@ -4,6 +4,7 @@ const { assignProject } = require("../controllers/AssignProject");
 const { addCompletedTask } = require("../controllers/AddCompletedTask");
 const bcrypt = require("bcrypt");
 const { editTaskAdded } = require("../controllers/EditTaskAdded");
+const { deleteTaskData } = require("../controllers/DeleteTaskHour");
 const AssignProject = require("../models/AssignProject");
 
 const resolvers = {
@@ -16,8 +17,7 @@ const resolvers = {
         path: "assignProject",
         populate: {
           path: "addTaskHours",
-          model: "projectTaskHours", 
-         
+          model: "projectTaskHours",
         },
       });
 
@@ -25,21 +25,23 @@ const resolvers = {
     },
     getAllDevelopers: async () => {
       try {
-        const developers = await User.find({ accountType: "Developer" }).populate({
+        const developers = await User.find({
+          accountType: "Developer",
+        }).populate({
           path: "assignProject",
           populate: {
             path: "addTaskHours",
-            model: "AddTaskHours", 
+            model: "AddTaskHours",
           },
         });
-  
+
         return developers;
       } catch (error) {
         console.error("Error fetching developers:", error);
         throw new Error("Error fetching developers");
       }
     },
-    getUserByID: async (_,args) => {
+    getUserByID: async (_, args) => {
       try {
         const user = await User.findOne({ _id: args.id }).populate({
           path: "assignProject",
@@ -54,14 +56,13 @@ const resolvers = {
         throw new Error("Error fetching assigned projects");
       }
     },
-    getAssignedProject: async (_,args) => {
+    getAssignedProject: async (_, args) => {
       try {
-        const user = await AssignProject.find({ developerId: args.id }).populate({
-      
-            path: "addTaskHours",
-            model: "AddTaskHours", 
-           
-        
+        const user = await AssignProject.find({
+          developerId: args.id,
+        }).populate({
+          path: "addTaskHours",
+          model: "AddTaskHours",
         });
         return user;
       } catch (error) {
@@ -69,13 +70,12 @@ const resolvers = {
         throw new Error("Error fetching assigned projects");
       }
     },
-    
   },
   Mutation: {
     signup: async (parent, args, context, info) => {
       try {
         const newUser = await signup(args.userData);
-       // console.log("Signup details:", newUser);
+        // console.log("Signup details:", newUser);
         return newUser;
       } catch (error) {
         throw new Error(error.message);
@@ -84,7 +84,7 @@ const resolvers = {
     login: async (parent, args, context, info) => {
       try {
         const loginDetails = await login(args.loginData, context);
-       // console.log("login details:", loginDetails);
+        // console.log("login details:", loginDetails);
         return loginDetails;
       } catch (error) {
         throw new Error(error.message);
@@ -102,21 +102,30 @@ const resolvers = {
     addTaskHours: async (parent, args, context, info) => {
       try {
         const taskHoursDetail = await addCompletedTask(args.taskHoursData);
-       // console.log("Add details",taskHoursDetail)
+        // console.log("Add details",taskHoursDetail)
         return taskHoursDetail;
       } catch (error) {
         throw new Error(error.message);
       }
     },
     editAddedTask: async (parent, args, context, info) => {
-       try {
-         const updateTaskDataDetail = await editTaskAdded(args.updateTaskData);
+      try {
+        const updateTaskDataDetail = await editTaskAdded(args.updateTaskData);
         // console.log("Updated task details",updateTaskDataDetail)
-         return updateTaskDataDetail;
-       } catch (error) {
-         throw new Error(error.message);
-       }
-     },
+        return updateTaskDataDetail;
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    },
+
+    deleteTaskData: async (parent, args, context, info) => {
+      try {
+        const deletedTaskDataDetail = await deleteTaskData(args.deletedata);
+        return deletedTaskDataDetail;
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    },
   },
 };
 
