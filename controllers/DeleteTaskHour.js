@@ -5,7 +5,6 @@ exports.deleteTaskData = async (deletedata) => {
   try {
     const { assignProjectId, date, day, hours, comments } = deletedata;
 
-    // Find and delete task hour data
     const deletedTaskHour = await AddTaskHours.findOneAndDelete({
       assignProjectId: assignProjectId,
       date: date,
@@ -15,7 +14,6 @@ exports.deleteTaskData = async (deletedata) => {
     });
 
     if (deletedTaskHour) {
-      // Remove task hour data reference from AssignProject
       await AssignProject.findByIdAndUpdate(
         assignProjectId,
         { $pull: { addTaskHours: deletedTaskHour._id } },
