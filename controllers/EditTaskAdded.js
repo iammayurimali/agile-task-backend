@@ -29,14 +29,12 @@ exports.editTaskAdded = async (updateTaskData) => {
     }
 
     if (
-      // userId !== addTaskHours.userId ||
-      //assignProjectId !== addTaskHours.assignProjectId ||
       date !== addTaskHours.date ||
       day !== addTaskHours.day
     ) {
       throw new Error("Cannot update day, or date");
     }
-    console.log(assignProjectId, addTaskHours.assignProjectId)
+    //console.log(assignProjectId, addTaskHours.assignProjectId)
     addTaskHours.hours = hours;
     addTaskHours.comments = comments;
 
@@ -44,7 +42,6 @@ exports.editTaskAdded = async (updateTaskData) => {
       {
         $match: {
           date: date,
-          assignProjectId: { $ne: assignProjectId }, 
         },
       },
       {
@@ -60,12 +57,10 @@ exports.editTaskAdded = async (updateTaskData) => {
       totalHoursForDate[0].totalHours + hours > 24
     ) {
       throw new Error(
-        "Total hours for the date exceed 24 hours across projects"
+        "Total hours for the date exceed 24 hours"
       );
     }
-
-  
-
+   // console.log("Total Hours: ",totalHoursForDate)
     await addTaskHours.save();
     updatedProjectTaskHours.push(addTaskHours);
 

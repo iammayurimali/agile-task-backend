@@ -14,6 +14,7 @@ type ProjectTaskHours{
 }
 type AddTaskHours{
     id:ID!
+    assignProjectId: ID
     date: String!
     day: String!
     hours: Float!
@@ -56,7 +57,6 @@ input UserInput{
 input LoginData{
     email: String
     password: String
-    accountType:String
 
 }
 

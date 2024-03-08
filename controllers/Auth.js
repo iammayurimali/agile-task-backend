@@ -47,8 +47,8 @@ exports.signup = async (userData) => {
 
 exports.login = async (loginData, context) => {
   try {
-    const { email, password, accountType } = loginData;
-    if (!email || !password || !accountType) {
+    const { email, password } = loginData;
+    if (!email || !password ) {
       throw new Error("Enter both fields");
     }
 
@@ -62,9 +62,9 @@ exports.login = async (loginData, context) => {
       throw new Error("Invalid password");
     }
 
-    if (user.accountType !== accountType) {
-      throw new Error("Incorrect account type");
-    }
+    // if (user.accountType !== accountType) {
+    //   throw new Error("Incorrect account type");
+    // }
 
     const payload = {
       email: user.email,

@@ -30,7 +30,6 @@ exports.addCompletedTask = async (taskHoursData) => {
         {
           $match: {
             date,
-            assignProjectId: { $ne: assignProjectId }, 
           },
         },
         {
@@ -43,7 +42,9 @@ exports.addCompletedTask = async (taskHoursData) => {
   
       const totalHoursInOtherProjects = totalHoursForDay.length > 0 ? totalHoursForDay[0].total : 0;
       const totalHoursIncludingCurrentProject = totalHoursInOtherProjects + hours;
-  
+
+      console.log("hoursss:",totalHoursIncludingCurrentProject)
+
       if (totalHoursIncludingCurrentProject > 24) {
         throw new Error("Total hours for the day across projects exceed 24");
       }

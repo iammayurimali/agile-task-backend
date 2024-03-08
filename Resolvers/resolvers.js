@@ -17,7 +17,7 @@ const resolvers = {
         path: "assignProject",
         populate: {
           path: "addTaskHours",
-          model: "projectTaskHours",
+          model: "AddTaskHours",
         },
       });
 
